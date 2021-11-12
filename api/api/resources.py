@@ -1,10 +1,15 @@
-from flask_restful import Resource
-from schemas import player_schema, player_schemas
-from schemas import opponent_schemas, opponent_schema
-from schemas import game_schema, game_schemas
-from schemas import point_schema, point_schemas
-from schemas import tournament_schema, tournament_schemas
-from models import Player, Opponent, Game, Point, Tournament
+from flask_restful import Resource, Api
+from flask import Blueprint
+from .schemas import player_schema, player_schemas
+from .schemas import opponent_schemas, opponent_schema
+from .schemas import game_schema, game_schemas
+from .schemas import point_schema, point_schemas
+from .schemas import tournament_schema, tournament_schemas
+from .models import Player, Opponent, Game, Point, Tournament
+
+
+resource_bp = Blueprint("resource_bp", __name__)
+api = Api(resource_bp)
 
 
 class PlayerListResource(Resource):
@@ -68,3 +73,15 @@ class PointResource(Resource):
     def get(self, point_id):
         point = Point.query.get_or_404(point_id)
         return point_schema.dump(point)
+
+
+api.add_resource(PlayerListResource, '/players')
+api.add_resource(PlayerResource, '/players/<int:player_id>')
+api.add_resource(OpponentListResource, '/opponents')
+api.add_resource(OpponentResource, '/opponents/<int:opponent_id>')
+api.add_resource(GameListResource, '/games')
+api.add_resource(GameResource, '/games/<int:game_id>')
+api.add_resource(TournamentListResource, '/tournaments')
+api.add_resource(TournamentResource, '/tournaments/<int:tournament_id>')
+api.add_resource(PointListResource, '/points')
+api.add_resource(PointResource, '/points/<int:point_id>')
