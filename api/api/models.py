@@ -14,6 +14,7 @@ class Game(db.Model):
     opponent_id = db.Column(db.Integer, db.ForeignKey('opponent.id'))
     opponent = db.relationship(
         "Opponent", backref=db.backref("opponent", uselist=False))
+    youtube_url = db.Column(db.String(60))
 
     chalice_score = db.Column(db.Integer)
     opponent_score = db.Column(db.Integer)
@@ -37,12 +38,21 @@ class Opponent(db.Model):
     nickname = db.Column(db.String(40))
 
 
+player_points = db.Table('player_points',
+                         db.Column('player_id', db.Integer,
+                                   db.ForeignKey('player.id')),
+                         db.Column('point_id', db.Integer,
+                                   db.ForeignKey('point.id'))
+                         )
+
+
 class Player(db.Model):
     __tablename__ = 'player'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
     nickname = db.Column(db.String(30))
     gender_matching = db.Column(db.String(20))
+    points = db.relationship("Point", secondary=player_points)
 
     def __repr__(self):
         return '<Player %s>' % self.nickname
@@ -53,23 +63,15 @@ class Point(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     game_id = db.Column(db.Integer, db.ForeignKey('game.id'))
     game = db.relationship("Game", backref=db.backref('game', uselist=False))
-    player1_id = db.Column(db.Integer, db.ForeignKey('player.id'))
-    player2_id = db.Column(db.Integer, db.ForeignKey('player.id'))
-    player3_id = db.Column(db.Integer, db.ForeignKey('player.id'))
-    player4_id = db.Column(db.Integer, db.ForeignKey('player.id'))
-    player5_id = db.Column(db.Integer, db.ForeignKey('player.id'))
-    player6_id = db.Column(db.Integer, db.ForeignKey('player.id'))
-    player7_id = db.Column(db.Integer, db.ForeignKey('player.id'))
-
-    player1 = db.relationship("Player", foreign_keys=[player1_id])
-    player2 = db.relationship("Player", foreign_keys=[player2_id])
-    player3 = db.relationship("Player", foreign_keys=[player3_id])
-    player4 = db.relationship("Player", foreign_keys=[player4_id])
-    player5 = db.relationship("Player", foreign_keys=[player5_id])
-    player6 = db.relationship("Player", foreign_keys=[player6_id])
-    player7 = db.relationship("Player", foreign_keys=[player7_id])
+    players = db.relationship("Player", secondary=player_points)
 
     chalice_score = db.Column(db.Integer)
     opponent_score = db.Column(db.Integer)
     youtube_start = db.Column(db.Integer)
     youtube_end = db.Column(db.Integer)
+
+    def __repr__(self):
+        return '<Point %s %d-%d %s>' % (self.game.tournament.nickname,
+                                        self.chalice_score,
+                                        self.opponent_score,
+                                        self.game.opponent.nickname)

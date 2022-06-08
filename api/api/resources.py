@@ -5,6 +5,7 @@ from .schemas import opponent_schemas, opponent_schema
 from .schemas import game_schema, game_schemas
 from .schemas import point_schema, point_schemas
 from .schemas import tournament_schema, tournament_schemas
+from .schemas import player_point_schema
 from .models import Player, Opponent, Game, Point, Tournament
 
 
@@ -17,6 +18,12 @@ class PlayerListResource(Resource):
         players = Player.query.all()
         print(players)
         return player_schemas.dump(players)
+
+
+class PlayerPointResource(Resource):
+    def get(self, player_id):
+        player = Player.query.get_or_404(player_id)
+        return player_point_schema.dump(player)
 
 
 class PlayerResource(Resource):
@@ -77,6 +84,7 @@ class PointResource(Resource):
 
 api.add_resource(PlayerListResource, '/players')
 api.add_resource(PlayerResource, '/players/<int:player_id>')
+api.add_resource(PlayerPointResource, '/players/<int:player_id>/points')
 api.add_resource(OpponentListResource, '/opponents')
 api.add_resource(OpponentResource, '/opponents/<int:opponent_id>')
 api.add_resource(GameListResource, '/games')
