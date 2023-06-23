@@ -14,6 +14,7 @@ def create_app():
         from .resources import resource_bp
 
         db.init_app(app)
+        db.create_all()
         ma.init_app(app)
         app.db = db
 
