@@ -14,6 +14,10 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 api = Api(app)
 
+@app.route('/')
+def home():
+    return render_template('index.html')
+
 
 @app.route('/time')
 def get_current_time():
