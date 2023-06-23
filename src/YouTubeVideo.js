@@ -8,8 +8,17 @@ class YouTubeVideo extends React.PureComponent {
     id: PropTypes.string.isRequired,
     start: PropTypes.string.isRequired,
     end: PropTypes.string.isRequired,
+    inPointPlaylist: PropTypes.string.isRequired,
     onPointEnd: PropTypes.func
   };
+
+  constructor(props) {
+    super(props) {
+      this.state = {
+        remainingAfterPause: 0,
+      }
+    }
+  }
 
   componentDidMount = () => {
     // On mount, check to see if the API script is already loaded
@@ -65,7 +74,7 @@ class YouTubeVideo extends React.PureComponent {
     console.log("set timer");
     this.currentPointTimer = setTimeout(
       () => this.props.onPointEnd(),
-      this.getPointDuration(this.state.currentPoint)
+      (this.props.end - this.props.start)*1000
     );
   };
 
@@ -73,15 +82,19 @@ class YouTubeVideo extends React.PureComponent {
     if (event.data == 1) { //playing
 
     } else if (event.data == 2) { // paused
+      if (this.state.inPointPlaylist) {
+        this.setState({
+          remaining: Date.now() - this.props.start,
 
+        })
+      }
     }
   }
 
   render = () => {
-    const { id } = this.props;
     return (
-      <div >
-        <div id={`youtube-player-${id}`} />
+      <div>
+        <div id={`youtube-player`} />
       </div>
     );
   };
