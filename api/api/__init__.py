@@ -15,11 +15,13 @@ def create_app():
 
         db.init_app(app)
         db.create_all()
-        ma.init_app(app)
-        app.db = db
 
-        app.register_blueprint(resource_bp)
+        
+        # ma.init_app(app)
+        # app.db = db
 
-        CORS(app)
+        # app.register_blueprint(resource_bp)
+
+        # CORS(app)
 
         return app
